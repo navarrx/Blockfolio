@@ -1,4 +1,4 @@
-package com.example.myapp.Cryptocurrency;
+package com.example.backend.Cryptocurrency;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/cryptocurrencies")
+@RequestMapping("/cryptocurrencies")
 public class CryptocurrencyController {
 
     private final CryptocurrencyServices cryptocurrencyServices;

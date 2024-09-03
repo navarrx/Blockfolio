@@ -1,4 +1,4 @@
-package com.example.myapp.Cryptocurrency;
+package com.example.backend.Cryptocurrency;
 
 public class CryptocurrencyDTO {
     private String name;

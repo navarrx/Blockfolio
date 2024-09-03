@@ -1,6 +1,6 @@
-package com.example.myapp.Cryptocurrency;
+package com.example.backend.Cryptocurrency;
 
-import com.example.myapp.Portfolio.Portfolio;
+import com.example.backend.Portfolio.Portfolio;
 import jakarta.persistence.*;
 import java.util.Set;
 

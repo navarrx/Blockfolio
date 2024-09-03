@@ -1,4 +1,4 @@
-package com.example.myapp.User;
+package com.example.backend.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,10 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import java.util.List;
-import com.example.myapp.User.UserServices;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserServices userServices;

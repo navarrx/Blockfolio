@@ -1,9 +1,9 @@
-package com.example.myapp.Portfolio;
+package com.example.backend.Portfolio;
 
-import com.example.myapp.Cryptocurrency.Cryptocurrency;
-import com.example.myapp.Cryptocurrency.CryptocurrencyRepository;
-import com.example.myapp.User.User;
-import com.example.myapp.User.UserRepository;
+import com.example.backend.Cryptocurrency.Cryptocurrency;
+import com.example.backend.Cryptocurrency.CryptocurrencyRepository;
+import com.example.backend.User.User;
+import com.example.backend.User.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

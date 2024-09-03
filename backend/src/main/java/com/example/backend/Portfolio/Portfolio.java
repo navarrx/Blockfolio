@@ -1,7 +1,8 @@
-package com.example.myapp.Portfolio;
+package com.example.backend.Portfolio;
 
-import com.example.myapp.User.User;
-import com.example.myapp.Cryptocurrency.Cryptocurrency;
+import com.example.backend.User.User;
+import com.example.backend.Cryptocurrency.Cryptocurrency;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -15,6 +16,7 @@ public class Portfolio {
 
     @OneToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     @ManyToMany
@@ -26,6 +28,7 @@ public class Portfolio {
     private Set<Cryptocurrency> cryptocurrencies;
 
     private Double quantity;
+
 
     // Getters and Setters
     public Integer getId() {

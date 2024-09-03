@@ -1,7 +1,7 @@
-package com.example.myapp.User;
+package com.example.backend.User;
 
-import com.example.myapp.Portfolio.Portfolio;
-import com.example.myapp.Portfolio.PortfolioRepository;
+import com.example.backend.Portfolio.Portfolio;
+import com.example.backend.Portfolio.PortfolioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,7 +22,8 @@ public class UserServices {
         return userRepository.findAll();
     }
 
-    public User getUserById(int id) { return userRepository.findById(id).orElse(null);
+    public User getUserById(int id) {
+        return userRepository.findById(id).orElse(null);
     }
 
     public User addUser(User user) {
@@ -53,7 +54,7 @@ public class UserServices {
     }
 
     public User validateUser(String email, String password) {
-        User user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email).orElse(null);
         if (user != null && new BCryptPasswordEncoder().matches(password, user.getPassword())) {
             return user;
         }
@@ -61,6 +62,6 @@ public class UserServices {
     }
 
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+        return userRepository.findByEmail(email).orElse(null);
     }
 }

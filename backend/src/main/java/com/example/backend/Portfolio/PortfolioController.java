@@ -1,4 +1,4 @@
-package com.example.myapp.Portfolio;
+package com.example.backend.Portfolio;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/portfolios")
+@RequestMapping("/portfolios")
 public class PortfolioController {
 
     @Autowired

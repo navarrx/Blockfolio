@@ -1,4 +1,4 @@
-package com.example.myapp.Cryptocurrency;
+package com.example.backend.Cryptocurrency;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
