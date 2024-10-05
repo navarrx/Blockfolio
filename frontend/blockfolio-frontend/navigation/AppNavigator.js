@@ -2,10 +2,12 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Entypo from '@expo/vector-icons/Entypo';
 import { View, Text } from 'react-native';
-
-import LoginScreen from '../screens/LoginScreen';
+import NewsScreen from '../screens/NewsScreen';
 import HomeScreen from '../screens/HomeScreen';
 import PortfolioScreen from '../screens/PortfolioScreen';
+import AuthNavigator from './AuthNavigator';
+import ProfileScreen from '../screens/ProfileScreen'; // Importar ProfileScreen
+import { useAuth } from '../context/AuthContext'; // Importar el contexto
 
 const Tab = createBottomTabNavigator();
 
@@ -19,11 +21,13 @@ const screenOptions = {
     left: 0,
     elevation: 0,
     height: 60,
-    backgroundColor: '#fff',
+    backgroundColor: '#000101',
   },
 };
 
 const AppNavigator = () => {
+  const { isAuthenticated } = useAuth(); // Obtener el estado de autenticación
+
   return (
     <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen
@@ -32,20 +36,20 @@ const AppNavigator = () => {
         options={{
           tabBarIcon: ({ focused }) => (
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-              <Entypo name="home" size={24} color={focused ? '#FFBF00' : '#3F3F3F'} />
-              <Text style={{ color: focused ? '#FFBF00' : '#3F3F3F' }}>Home</Text>
+              <Entypo name="home" size={20} color={focused ? '#FFBF00' : 'white'} />
+              <Text style={{ color: focused ? '#FFBF00' : 'white', fontSize: 13 }}>Home</Text>
             </View>
           ),
         }}
       />
       <Tab.Screen
-        name="Login"
-        component={LoginScreen}
+        name="News"
+        component={NewsScreen}
         options={{
           tabBarIcon: ({ focused }) => (
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-              <Entypo name="login" size={24} color={focused ? '#FFBF00' : '#3F3F3F'} />
-              <Text style={{ color: focused ? 'black' : 'gray' }}>Login</Text>
+              <Entypo name="news" size={20} color={focused ? '#FFBF00' : 'white'} />
+              <Text style={{ color: focused ? '#FFBF00' : 'white', fontSize: 13 }}>News</Text>
             </View>
           ),
         }}
@@ -56,12 +60,39 @@ const AppNavigator = () => {
         options={{
           tabBarIcon: ({ focused }) => (
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-              <Entypo name="wallet" size={24} color={focused ? '#FFBF00' : '#3F3F3F'} />
-              <Text style={{ color: focused ? 'black' : 'gray' }}>Portfolio</Text>
+              <Entypo name="wallet" size={20} color={focused ? '#FFBF00' : 'white'} />
+              <Text style={{ color: focused ? '#FFBF00' : 'white', fontSize: 13 }}>Portfolio</Text>
             </View>
           ),
         }}
       />
+      {isAuthenticated ? (
+        <Tab.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <Entypo name="user" size={20} color={focused ? '#FFBF00' : 'white'} />
+                <Text style={{ color: focused ? '#FFBF00' : 'white', fontSize: 13 }}>Profile</Text>
+              </View>
+            ),
+          }}
+        />
+      ) : (
+        <Tab.Screen
+          name="Auth"
+          component={AuthNavigator}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <Entypo name="login" size={20} color={focused ? '#FFBF00' : 'white'} />
+                <Text style={{ color: focused ? '#FFBF00' : 'white', fontSize: 13 }}>Login</Text>
+              </View>
+            ),
+          }}
+        />
+      )}
     </Tab.Navigator>
   );
 };
