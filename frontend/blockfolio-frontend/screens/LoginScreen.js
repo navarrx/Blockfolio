@@ -1,65 +1,119 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
-import axios from 'axios';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import { handleLogin } from '../api';
+import { useAuth } from '../context/AuthContext'; // Importar el contexto de autenticación
 
 const LoginScreen = ({ navigation }) => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { login } = useAuth(); // Usar el método login del contexto
 
-    const handleLogin = async () => {
-        try {
-            const response = await axios.post('http://localhost:8080/api/auth/login', {
-                email,
-                password
-            });
-            if (response.status === 200) {
-                // Navigate to HomeScreen
-                navigation.navigate('Home');
-            }
-        } catch (err) {
-            setError('Invalid email or password');
-        }
-    };
+  const onLoginPress = async () => {
+    const result = await handleLogin(email, password);
+    if (result.success) {
+      Alert.alert("Success", "Logged in successfully");
+      login(result.data);
+    } else {
+      Alert.alert("Error", result.error);
+    }
+  };
+  
+  
 
-    return (
-        <View style={styles.container}>
-            <TextInput
-                style={styles.input}
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Password"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
-            />
-            {error ? <Text style={styles.error}>{error}</Text> : null}
-            <Button title="Login" onPress={handleLogin} />
-        </View>
-    );
+  return (
+    <View style={styles.container}>
+      <FontAwesome5 name="user-circle" size={100} color="#ffab00" style={{ alignSelf: 'center', marginBottom: 16 }} />
+      <Text style={styles.title}>Welcome Back!</Text>
+      <View style={styles.line}></View>
+      <Text style={styles.subtitle}>Log in to your account to unlock all the features</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        keyboardType="email-address"
+        value={email}
+        onChangeText={setEmail}
+        placeholderTextColor="#888"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+        placeholderTextColor="#888"
+      />
+
+      <TouchableOpacity style={styles.button} onPress={onLoginPress}>
+        <Text style={styles.buttonText}>Log In</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+        <Text style={styles.switchText}>Don't have an account? <Text style={styles.switchTextBold}>Sign up</Text></Text>
+      </TouchableOpacity>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        padding: 20,
-    },
-    input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 10,
-        paddingLeft: 8,
-    },
-    error: {
-        color: 'red',
-        marginBottom: 10,
-    },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+    backgroundColor: '#0c0c0c',  // Background consistent with HomeScreen
+  },
+  title: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#FFFFFF',  // White text for title
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 25,
+    color: 'darkgray',  // Light grey text for subtitle
+    marginBottom: 24,
+    textAlign: 'center',
+  },
+  line: {
+    borderBottomColor: 'grey',
+    borderBottomWidth: 0.8,
+    width: '40%',
+    marginTop: 8,
+    marginBottom: 10,
+    alignSelf: 'center',
+  },
+  input: {
+    height: 50,
+    borderColor: '#333',  // Darker border to match the theme
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    marginBottom: 16,
+    backgroundColor: '#1c1c1e',  // Dark input background
+    color: '#FFFFFF',  // White text inside inputs
+  },
+  button: {
+    backgroundColor: '#ffab00',  // Blue color for the login button
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  buttonText: {
+    color: 'black',
+    fontSize: 18,
+    textAlign: 'center',
+  },
+  switchText: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#888',  // Light grey text for switch text
+  },
+  switchTextBold: {
+    color: '#ffab00',  // Accent color matching HomeScreen
+    fontWeight: 'bold',
+  },
 });
 
 export default LoginScreen;

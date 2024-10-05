@@ -1,5 +1,6 @@
 package com.example.backend.Cryptocurrency;
 
+
 public class CryptocurrencyDTO {
     private String name;
     private String symbol;
