@@ -17,7 +17,14 @@ export default function CryptoCard({
             </View>
             <View style={styles.changeContainer}>
                 <Text style={styles.label}>24hr Change</Text>
-                <Text style={styles.percentChange}>{percentChange}%</Text>
+                <Text
+                    style={[
+                        styles.percentChange,
+                        { color: percentChange < 0 ? 'red' : 'green' },
+                    ]}
+                >
+                    {percentChange.toFixed(2)}%
+                </Text>
             </View>
         </View>
     );
@@ -29,7 +36,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 15,
         borderRadius: 10,
-        backgroundColor: '#FFFDF6',
+        backgroundColor: '#F7F9FC',
         marginVertical: 5,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },

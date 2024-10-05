@@ -1,49 +1,70 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { View, Text, Button, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
+import { fetchTopCryptos } from '../api';
 import CryptoCard from '../components/CryptoCard';
+import SearchCrypto from '../components/SearchCrypto';
+import Tab from '../components/Tab';
 
 const HomeScreen = ({ navigation }) => {
+    const [activeTab, setActiveTab] = useState('TopCryptos');
+
+    const tabs = [
+        { key: 'TopCryptos', label: 'Trending' },
+        { key: 'TopGainers', label: 'Gainers' },
+        { key: 'TopLosers', label: 'Losers' },
+    ];
+
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Welcome to Blockfolio</Text>
-            <Button 
-                title="Go to Login" 
-                onPress={() => navigation.navigate('Login')} 
+
+            <SearchCrypto navigation={navigation} />
+            <Text style={styles.title}>Track your cryptos using the best Portfolio app!</Text>
+            <View style={styles.line} />
+
+            <Tab 
+                tabs={tabs} 
+                activeTab={activeTab} 
+                setActiveTab={setActiveTab} 
             />
-            <TopCryptoList />
+
+            <TopCryptoList activeTab={activeTab} />
         </View>
     );
 };
 
-const TopCryptoList = () => {
+const TopCryptoList = ({ activeTab }) => {
     const [cryptos, setCryptos] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchCryptos = async () => {
             try {
-                const response = await axios.get(
-                    'http://192.168.18.13:8080/api/cryptocurrencies/topCryptos'
-                );
-                console.log(response.data);
-                setCryptos(response.data);
+                setLoading(true);
+                const data = await fetchTopCryptos(activeTab);
+                setCryptos(data);
             } catch (error) {
                 console.error('Error fetching cryptocurrencies:', error);
+            } finally {
+                setLoading(false);
             }
         };
-
+    
         fetchCryptos();
-    }, []);
+    }, [activeTab]);
 
     return (
         <View style={styles.listContainer}>
-            <FlashList
-                data={cryptos}
-                contentContainerStyle={styles.flashListContent}
-                renderItem={({ item }) => <CryptoCard {...item} />}
-                estimatedItemSize={10}
-            />
+            {loading ? (
+                <ActivityIndicator size="large" color="#FFF" />
+            ) : (
+                <FlashList
+                    data={cryptos}
+                    contentContainerStyle={styles.flashListContent}
+                    renderItem={({ item }) => <CryptoCard {...item} />}
+                    estimatedItemSize={10}
+                />
+            )}
         </View>
     );
 };
@@ -51,34 +72,40 @@ const TopCryptoList = () => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-  container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#FFFDF6',
-      padding: 20,
-  },
-  title: {
-      fontSize: 24,
-      fontWeight: 'bold',
-      color: '#333',
-      marginBottom: 10,
-  },
-  listContainer: {
-      flex: 1,
-      width: '100%',
-      maxHeight: '60%',
-      backgroundColor: '#DDDDDD',
-      borderRadius: 15,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.2,
-      shadowRadius: 5,
-      elevation: 5,
-      paddingHorizontal: 10,
-      paddingVertical: 5,
-  },
-  flashListContent: {
-      paddingVertical: 5,
-  },
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#000101',
+        padding: 20,
+    },
+    line: {
+        borderBottomColor: 'grey',
+        borderBottomWidth: 0.5,
+        width: '80%',
+        marginTop: 10,
+        marginBottom: 20,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#FFFFFF',
+        marginBottom: 10,
+    },
+    listContainer: {
+        flex: 1,
+        width: '100%',
+        backgroundColor: '#000101',
+        borderRadius: 15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
+        elevation: 5,
+        paddingHorizontal: 10,
+        marginBottom: 50,
+    },
+    flashListContent: {
+        paddingVertical: 5,
+    },
 });
