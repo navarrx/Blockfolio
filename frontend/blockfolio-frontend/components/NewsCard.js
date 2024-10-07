@@ -40,13 +40,15 @@ const styles = StyleSheet.create({
     newsItem: {
         marginVertical: 10,
         borderRadius: 15,
-        backgroundColor: '#1E1E1E', // Fondo oscuro
+        backgroundColor: '#1E1E1E',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 5,
         elevation: 5,
-        overflow: 'hidden', // Para redondear los bordes de la imagen
+        overflow: 'hidden',
+        borderBottomWidth: 3,
+        borderBottomColor: '#ffab00',
     },
     image: {
         width: '100%',
@@ -58,17 +60,17 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 17,
         fontWeight: 'bold',
-        color: '#FFFFFF', // Color blanco para el título
+        color: '#FFFFFF',
         marginBottom: 5,
     },
     body: {
         fontSize: 14,
-        color: '#CCCCCC', // Color gris claro para el cuerpo
+        color: '#CCCCCC',
         marginBottom: 10,
     },
     publishedOn: {
         fontSize: 12,
-        color: '#AAAAAA', // Color gris más claro para la fecha
+        color: '#AAAAAA',
         marginTop: 5,
     },
     changeContainer: {
@@ -78,7 +80,7 @@ const styles = StyleSheet.create({
     line: {
         borderBottomColor: 'grey',
         borderBottomWidth: 0.5,
-        width: '80%',
+        width: '100%',
         marginTop: 10,
         marginBottom: 10,
         alignSelf: 'center',
