@@ -12,6 +12,8 @@ const API_AUTH_BASE_URL = 'http://192.168.18.13:8080/api/auth';
 
 const API_USER_BASE_URL = 'http://192.168.18.13:8080/api/users';
 
+const API_PORTFOLIO_BASE_URL = 'http://192.168.18.13:8080/api/portfolios';
+
 export const handleLogin = async (email, password) => {
   try {
     const response = await axios.post(`${API_AUTH_BASE_URL}/login`, {
@@ -23,9 +25,8 @@ export const handleLogin = async (email, password) => {
       const token = response.data.token;
       await AsyncStorage.setItem('@jwt_token', token);
 
-      // Hacer una llamada para obtener los datos del usuario logueado
-      const userResponse = await getUserProfile(token); // Usar la función de perfil
-      return { success: true, data: userResponse.data }; // Devolver los datos del usuario
+      const userResponse = await getUserProfile(token);
+      return { success: true, data: userResponse.data };
     } else {
       return { success: false, error: 'Invalid response status' };
     }
@@ -35,6 +36,19 @@ export const handleLogin = async (email, password) => {
     } else {
       return { success: false, error: 'Something went wrong, please try again' };
     }
+  }
+};
+
+export const registerUser = async (name, email, password) => {
+  try {
+    const response = await axios.post(`${API_AUTH_BASE_URL}/register`, {
+      name,
+      email,
+      password,
+    });
+    return response;
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -52,33 +66,64 @@ export const getUserProfile = async (token) => {
   }
 };
 
-
-export const registerUser = async (name, email, password) => {
+export const updateUserProfile = async (data) => {
   try {
-    const response = await axios.post(`${API_AUTH_BASE_URL}/register`, {
-      name,
-      email,
-      password,
+    const token = await AsyncStorage.getItem('@jwt_token');
+    const userProfileResponse = await getUserProfile(token);
+    const userId = userProfileResponse.data.id;
+
+    const response = await axios.put(`${API_USER_BASE_URL}/update?userId=${userId}`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
-    return response;
+    
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Failed to update profile.');
+    }
+  } catch (error) {
+    console.error(error);
+    throw new Error(error.response?.data?.message || 'Failed to update profile. Please try again.');
+  }
+};
+
+
+export const fetchUserPortfolio = async () => {
+  try {
+    const token = await AsyncStorage.getItem('@jwt_token');
+    const userProfileResponse = await getUserProfile(token);
+    const userId = userProfileResponse.data.id;
+
+    const response = await axios.get(`${API_PORTFOLIO_BASE_URL}/getEachCryptoValue?userId=${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response.data);
+    return response.data;
   } catch (error) {
     throw error;
   }
 };
 
-export const updateUserProfile = async (data) => {
+export const getPortfolioValue = async () => {
   try {
     const token = await AsyncStorage.getItem('@jwt_token');
-    const response = await axios.put(`${API_USER_BASE_URL}/update`, data, {
+    const userProfileResponse = await getUserProfile(token);
+    const userId = userProfileResponse.data.id;
+
+    const response = await axios.get(`${API_PORTFOLIO_BASE_URL}/getTotalValue?userId=${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    return response;
+    return response.data;
   } catch (error) {
     throw error;
   }
-}
+};
 
 export const fetchTopCryptos = async (tab) => {
   try {
@@ -98,7 +143,6 @@ export const fetchTopCryptos = async (tab) => {
     const response = await axios.get(`${API_CRYPTOCURRENCIES_BASE_URL}${endpoint}`);
     return response.data;
   } catch (error) {
-    console.error(`Error fetching ${tab}:`, error);
     throw error;
   }
 };
@@ -109,7 +153,6 @@ export const fetchCryptoDetails = async (symbol) => {
   const response = await axios.get(`${API_CRYPTOCURRENCIES_BASE_URL}/getDataByCrypto?symbol=${symbol}`);
   return response.data;
   } catch (error) {
-    console.error('Error fetching crypto details:', error);
     throw error;
   }
 };
@@ -119,7 +162,65 @@ export const fetchCryptoNews = async () => {
     const response = await axios.get(`${API_CRYPTOCURRENCIES_BASE_URL}/getNews`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching news:', error);
+    throw error;
+  }
+};
+
+export const addCryptoToPortfolio = async (symbol, quantity) => {
+  try {
+    const token = await AsyncStorage.getItem('@jwt_token');
+    const userProfileResponse = await getUserProfile(token);
+    const userId = userProfileResponse.data.id;
+
+    const response = await axios.post(`${API_PORTFOLIO_BASE_URL}/add?userId=${userId}&symbol=${symbol}&quantity=${quantity}`, {
+      userId,
+      symbol,
+      quantity,
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const removeCryptoFromPortfolio = async (symbol) => {
+  try {
+    const token = await AsyncStorage.getItem('@jwt_token');
+    const userProfileResponse = await getUserProfile(token);
+    const userId = userProfileResponse.data.id;
+
+    const response = await axios.delete(`${API_PORTFOLIO_BASE_URL}/remove?userId=${userId}&symbol=${symbol}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateCryptoInPortfolio = async (symbol, quantity) => {
+  try {
+    const token = await AsyncStorage.getItem('@jwt_token');
+    const userProfileResponse = await getUserProfile(token);
+    const userId = userProfileResponse.data.id;
+
+    const response = await axios.put(`${API_PORTFOLIO_BASE_URL}/update?userId=${userId}&symbol=${symbol}&quantity=${quantity}`, {
+      userId,
+      symbol,
+      quantity,
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
     throw error;
   }
 }
