@@ -1,4 +1,4 @@
-package com.example.backend.Cryptocurrency;
+package com.example.backend.PortfolioCryptocurrency;
 
 
 public class CryptocurrencyDTO {

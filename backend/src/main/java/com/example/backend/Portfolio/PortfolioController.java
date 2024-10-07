@@ -1,5 +1,8 @@
 package com.example.backend.Portfolio;
 
+import com.example.backend.PortfolioCryptocurrency.PortfolioCryptocurrency;
+import com.example.backend.PortfolioCryptocurrency.PortfolioCryptocurrencyDTO;
+import com.example.backend.PortfolioCryptocurrency.PortfolioCryptocurrencyServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,61 +20,86 @@ public class PortfolioController {
     @Autowired
     private PortfolioService portfolioService;
 
-    @GetMapping
-    public List<Portfolio> getAllPortfolios() {
-        return portfolioService.getAllPortfolios();
-    }
+    @Autowired
+    private PortfolioCryptocurrencyServices portfolioCryptocurrencyServices;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Portfolio> getPortfolioById(@PathVariable Integer id) {
-        Optional<Portfolio> portfolio = portfolioService.getPortfolioById(id);
-        if (portfolio.isPresent()) {
-            return ResponseEntity.ok(portfolio.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @GetMapping("/user/{userId}")
-    public List<Portfolio> getPortfoliosByUserId(@PathVariable Integer userId) {
-        return portfolioService.getPortfoliosByUserId(userId);
-    }
-
-    @PostMapping
-    public Portfolio createPortfolio(@RequestBody Portfolio portfolio) {
-        return portfolioService.createPortfolio(portfolio);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Portfolio> updatePortfolio(@PathVariable Integer id, @RequestBody Portfolio portfolioDetails) {
-        Portfolio updatedPortfolio = portfolioService.updatePortfolio(id, portfolioDetails);
-        if (updatedPortfolio != null) {
-            return ResponseEntity.ok(updatedPortfolio);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePortfolio(@PathVariable Integer id) {
-        portfolioService.deletePortfolio(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/{userId}/addCrypto")
+    @PostMapping("/add")
     public ResponseEntity<?> addCryptocurrencyToPortfolio(
-            @PathVariable Integer userId,
+            @RequestParam Integer userId,
             @RequestParam String symbol,
-            @RequestParam double quantity
-    ) {
-        try {
-            Portfolio portfolio = portfolioService.addCryptocurrencyToPortfolio(userId, symbol, quantity);
-            return ResponseEntity.ok(portfolio);
-        } catch (Exception e) {
-            Map<String, String> response = new HashMap<>();
-            response.put("message", e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
+            @RequestParam Double quantity) {
+
+        Portfolio portfolio = portfolioService.getPortfolioByUserId(userId);
+
+        PortfolioCryptocurrency portfolioCryptocurrency = portfolioCryptocurrencyServices.createOrUpdatePortfolioCryptocurrency(portfolio, symbol, quantity);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Cryptocurrency added/updated successfully");
+        response.put("portfolioCryptocurrency", portfolioCryptocurrency);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @DeleteMapping("/remove")
+    public ResponseEntity<?> removeCryptocurrencyFromPortfolio(
+            @RequestParam Integer userId,
+            @RequestParam String symbol) {
+
+        Portfolio portfolio = portfolioService.getPortfolioByUserId(userId);
+
+        portfolioCryptocurrencyServices.removePortfolioCryptocurrency(portfolio, symbol);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Cryptocurrency removed successfully");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateCryptocurrencyInPortfolio(
+            @RequestParam Integer userId,
+            @RequestParam String symbol,
+            @RequestParam Double quantity) {
+
+        Portfolio portfolio = portfolioService.getPortfolioByUserId(userId);
+
+        portfolioCryptocurrencyServices.updatePortfolioCryptocurrency(portfolio, symbol, quantity);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Cryptocurrency updated successfully");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/getPortfolio")
+    public ResponseEntity<?> getPortfolio(
+            @RequestParam Integer userId) {
+
+        Portfolio portfolio = portfolioService.getPortfolioByUserId(userId);
+        if (portfolio == null) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Portfolio not found");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(portfolio, HttpStatus.OK);
+    }
+
+    @GetMapping("/getTotalValue")
+    public ResponseEntity<?> getTotalPortfolioValue(
+            @RequestParam Integer userId) {
+
+        Double totalValue = portfolioService.updateTotalPortfolioValue(userId);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalValue", totalValue);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/getEachCryptoValue")
+    public ResponseEntity<?> getEachCryptoValue(
+            @RequestParam Integer userId) {
+
+        List<PortfolioCryptocurrencyDTO> updatedCryptos = portfolioService.updateEachCrypto(userId);
+
+        return new ResponseEntity<>(updatedCryptos, HttpStatus.OK);
+    }
 }

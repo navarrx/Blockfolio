@@ -1,71 +1,88 @@
 package com.example.backend.Portfolio;
 
-import com.example.backend.Cryptocurrency.Cryptocurrency;
-import com.example.backend.Cryptocurrency.CryptocurrencyRepository;
+import com.example.backend.PortfolioCryptocurrency.CCCryptocurrencyDTO;
+import com.example.backend.PortfolioCryptocurrency.PortfolioCryptocurrency;
+import com.example.backend.PortfolioCryptocurrency.PortfolioCryptocurrencyDTO;
+import com.example.backend.PortfolioCryptocurrency.PortfolioCryptocurrencyServices;
 import com.example.backend.User.User;
-import com.example.backend.User.UserRepository;
+import com.example.backend.User.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class PortfolioService {
 
     @Autowired
-    private CryptocurrencyRepository cryptocurrencyRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private PortfolioRepository portfolioRepository;
 
-    public List<Portfolio> getAllPortfolios() {
-        return portfolioRepository.findAll();
+    @Autowired
+    private UserServices userServices;
+
+    @Autowired
+    private PortfolioCryptocurrencyServices portfolioCryptocurrencyServices;
+
+    public Portfolio getPortfolioByUserId(Integer userId) {
+        List<Portfolio> portfolios = portfolioRepository.findByUserId(userId);
+        if (portfolios.isEmpty()) {
+            return createNewPortfolioForUser(userId); // Crea un nuevo portfolio si no existe
+        }
+        return portfolios.get(0); // Devuelve el primer portfolio encontrado (debería haber solo uno por usuario)
     }
 
-    public Optional<Portfolio> getPortfolioById(Integer id) {
-        return portfolioRepository.findById(id);
-    }
-
-    public List<Portfolio> getPortfoliosByUserId(Integer userId) {
-        return portfolioRepository.findByUserId(userId);
-    }
-
-    public List<Portfolio> getPortfoliosByCryptocurrencyId(Integer cryptocurrencyId) {
-        return portfolioRepository.findByCryptocurrencies_Id(cryptocurrencyId); // Ajustado para llamar al método correcto
-    }
-
-    public Portfolio createPortfolio(Portfolio portfolio) {
-        return portfolioRepository.save(portfolio);
-    }
-
-    public Portfolio updatePortfolio(Integer id, Portfolio portfolioDetails) {
-        Optional<Portfolio> portfolioOptional = portfolioRepository.findById(id);
-        if (portfolioOptional.isPresent()) {
-            Portfolio portfolio = portfolioOptional.get();
-            portfolio.setUser(portfolioDetails.getUser());
-            portfolio.setCryptocurrencies(portfolioDetails.getCryptocurrencies());
-            portfolio.setQuantity(portfolioDetails.getQuantity());
+    public Portfolio createNewPortfolioForUser(Integer userId) {
+        Optional<User> userOptional = Optional.ofNullable(userServices.getUserById(userId));
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            Portfolio portfolio = new Portfolio();
+            portfolio.setUser(user);
+            portfolio.setPortfolioCryptocurrencies(Set.of()); // Inicializar el set de criptomonedas vacío
             return portfolioRepository.save(portfolio);
         }
-        return null; // O lanzar una excepción
+        throw new RuntimeException("Usuario no encontrado con ID: " + userId);
     }
 
-    public void deletePortfolio(Integer id) {
-        portfolioRepository.deleteById(id);
-    }
+    public Double updateTotalPortfolioValue(Integer userId) {
+        Portfolio portfolio = getPortfolioByUserId(userId);
+        Set<PortfolioCryptocurrency> cryptocurrencies = portfolio.getPortfolioCryptocurrencies();
 
-    public Portfolio addCryptocurrencyToPortfolio(Integer userId, String cryptoSymbol, double quantity){
-        User user = userRepository.findById(userId).orElse(null);
-        Cryptocurrency cryptocurrency = cryptocurrencyRepository.findBySymbol(cryptoSymbol);
-        if (user == null || cryptocurrency == null) {
-            return null;
+        Double totalValue = 0.0;
+        for (PortfolioCryptocurrency cryptocurrency : cryptocurrencies) {
+            Double value = portfolioCryptocurrencyServices.getCryptocurrencyValue(cryptocurrency.getSymbol());
+            totalValue += value * cryptocurrency.getQuantity();
         }
-        Portfolio portfolio = portfolioRepository.findByUserId(userId).get(0);
-        portfolio.addCryptocurrency(cryptocurrency, quantity);
-        return portfolioRepository.save(portfolio);
+
+        return totalValue;
+    }
+
+    public List<PortfolioCryptocurrencyDTO> updateEachCrypto(Integer userId) {
+        Portfolio portfolio = getPortfolioByUserId(userId);
+        Set<PortfolioCryptocurrency> cryptocurrencies = portfolio.getPortfolioCryptocurrencies();
+
+        List<PortfolioCryptocurrencyDTO> updatedCryptos = new ArrayList<>();
+
+        for (PortfolioCryptocurrency portfolioCryptocurrency : cryptocurrencies) {
+            String symbol = portfolioCryptocurrency.getSymbol();
+
+            CCCryptocurrencyDTO cryptoData = portfolioCryptocurrencyServices.getDataBySymbol(symbol);
+
+            if (cryptoData != null) {
+                PortfolioCryptocurrencyDTO updatedCrypto = new PortfolioCryptocurrencyDTO();
+                updatedCrypto.setSymbol(symbol);
+                updatedCrypto.setLogoURL(cryptoData.getLogoURL()); // Agrega esta línea
+                updatedCrypto.setQuantity(portfolioCryptocurrency.getQuantity());
+                updatedCrypto.setCurrentPrice(cryptoData.getPrice());
+                updatedCrypto.setTotalValue(cryptoData.getPrice() * portfolioCryptocurrency.getQuantity());
+
+                updatedCryptos.add(updatedCrypto);
+            }
+        }
+
+        return updatedCryptos;
     }
 }
