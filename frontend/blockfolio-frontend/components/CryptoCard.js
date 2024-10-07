@@ -9,7 +9,7 @@ export default function CryptoCard({
 }) {
     return (
         <View style={styles.cryptoItem}>
-            <Image source={{ uri: logoURL }} style={styles.logo} />
+            <Image source={{ uri: logoURL }} style={styles.logo}/>
             <View style={styles.cryptoInfo}>
                 <Text style={styles.name}>{name}</Text>
                 <Text style={styles.symbol}>{symbol}</Text>

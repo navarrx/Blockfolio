@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
-import { FlashList } from '@shopify/flash-list';
-import { fetchTopCryptos } from '../api';
-import CryptoCard from '../components/CryptoCard';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { useAuth } from '../context/AuthContext';
+import PortfolioValue from '../components/PortfolioValue';
 import SearchCrypto from '../components/SearchCrypto';
 import Tab from '../components/Tab';
+import TopCryptoList from '../components/TopCryptoList';
 
 const HomeScreen = ({ navigation }) => {
+    const { isAuthenticated } = useAuth();
     const [activeTab, setActiveTab] = useState('TopCryptos');
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const tabs = [
         { key: 'TopCryptos', label: 'Trending' },
@@ -15,61 +17,25 @@ const HomeScreen = ({ navigation }) => {
         { key: 'TopLosers', label: 'Losers' },
     ];
 
+    const handleRefresh = () => {
+        setRefreshTrigger(prev => !prev);
+    };
+
     return (
         <View style={styles.container}>
-
             <SearchCrypto navigation={navigation} />
             <Text style={styles.title}>Track your cryptos using the best Portfolio app!</Text>
             <View style={styles.line} />
-
+            {isAuthenticated && <PortfolioValue refreshTrigger={refreshTrigger} />}
             <Tab 
                 tabs={tabs} 
                 activeTab={activeTab} 
                 setActiveTab={setActiveTab} 
             />
-
-            <TopCryptoList activeTab={activeTab} />
+            <TopCryptoList activeTab={activeTab} navigation={navigation} onRefresh={handleRefresh} />
         </View>
     );
 };
-
-const TopCryptoList = ({ activeTab }) => {
-    const [cryptos, setCryptos] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchCryptos = async () => {
-            try {
-                setLoading(true);
-                const data = await fetchTopCryptos(activeTab);
-                setCryptos(data);
-            } catch (error) {
-                console.error('Error fetching cryptocurrencies:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-    
-        fetchCryptos();
-    }, [activeTab]);
-
-    return (
-        <View style={styles.listContainer}>
-            {loading ? (
-                <ActivityIndicator size="large" color="#FFF" />
-            ) : (
-                <FlashList
-                    data={cryptos}
-                    contentContainerStyle={styles.flashListContent}
-                    renderItem={({ item }) => <CryptoCard {...item} />}
-                    estimatedItemSize={10}
-                />
-            )}
-        </View>
-    );
-};
-
-export default HomeScreen;
 
 const styles = StyleSheet.create({
     container: {
@@ -92,20 +58,6 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         marginBottom: 10,
     },
-    listContainer: {
-        flex: 1,
-        width: '100%',
-        backgroundColor: '#000101',
-        borderRadius: 15,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 5,
-        elevation: 5,
-        paddingHorizontal: 10,
-        marginBottom: 50,
-    },
-    flashListContent: {
-        paddingVertical: 5,
-    },
 });
+
+export default HomeScreen;

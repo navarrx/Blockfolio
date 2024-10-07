@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 const SearchCrypto = ({ navigation }) => {
   const [symbol, setSymbol] = useState('');
@@ -10,7 +9,7 @@ const SearchCrypto = ({ navigation }) => {
       alert("Please enter a valid symbol");
       return;
     }
-    navigation.navigate('CryptoDetails', { symbol });
+    navigation.navigate('CryptoDetailsScreen', { symbol });
   };
 
   return (
@@ -46,5 +45,6 @@ const styles = StyleSheet.create({
     borderRadius: 20, 
     paddingHorizontal: 15,
     backgroundColor: '#25282d',
+    color: 'white',
   },
 });
