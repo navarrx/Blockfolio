@@ -32,33 +32,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String token = getTokenFromRequest(request);
         final String email;
 
-        if (token==null)
-        {
+        if (token == null) {
+            System.out.println("Token not found in request");
             filterChain.doFilter(request, response);
             return;
         }
 
-        email=jwtService.getEmailFromToken(token);
+        email = jwtService.getEmailFromToken(token);
+        System.out.println("Extracted email from token: " + email);
 
-        if (email!=null && SecurityContextHolder.getContext().getAuthentication()==null){
-            UserDetails userDetails=userDetailsService.loadUserByUsername(email);
-
-            if(jwtService.isTokenValid(token, userDetails)){
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            if (jwtService.isTokenValid(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
                         userDetails.getAuthorities());
-
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+                System.out.println("Token is valid, setting authentication");
+            } else {
+                System.out.println("Token is invalid");
             }
-
         }
 
         filterChain.doFilter(request, response);
-
     }
+
 
     private String getTokenFromRequest(HttpServletRequest request) {
         final String authHeader=request.getHeader(HttpHeaders.AUTHORIZATION);

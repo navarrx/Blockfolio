@@ -2,6 +2,8 @@ package com.example.backend.Auth;
 
 
 import com.example.backend.Jwt.JwtService;
+import com.example.backend.Portfolio.Portfolio;
+import com.example.backend.Portfolio.PortfolioRepository;
 import com.example.backend.User.Role;
 import com.example.backend.User.User;
 import com.example.backend.User.UserRepository;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
 
+    private final PortfolioRepository portfolioRepository;
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
@@ -38,7 +41,15 @@ public class AuthService {
                 .role(Role.USER)
                 .build();
 
-        userRepository.save(user);
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("User already exists");
+        } else {
+            User savedUser = userRepository.save(user);
+
+            Portfolio portfolio = new Portfolio();
+            portfolio.setUser(savedUser);
+            portfolioRepository.save(portfolio);
+        }
 
         return AuthResponse.builder()
                 .token(jwtService.getToken(user))

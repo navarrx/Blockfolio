@@ -29,6 +29,15 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authRequest ->
                         authRequest
                                 .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/cryptocurrencies/topCryptos").permitAll()
+                                .requestMatchers("/cryptocurrencies/topCryptosGainers").permitAll()
+                                .requestMatchers("/cryptocurrencies/topCryptosLosers").permitAll()
+                                .requestMatchers("/cryptocurrencies/getDataByCrypto").permitAll()
+                                .requestMatchers("/cryptocurrencies/getNews").permitAll()
+                                .requestMatchers("/swagger-ui/**").permitAll()
+                                .requestMatchers("/v3/api-docs/**").permitAll()
+                                .requestMatchers("/swagger-ui.html").permitAll()
+                                .requestMatchers("/api/users/update").authenticated()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManager ->
