@@ -2,25 +2,33 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { handleLogin } from '../api';
-import { useAuth } from '../context/AuthContext'; // Importar el contexto de autenticación
+import { useAuth } from '../context/AuthContext';
+import ProfileButton from '../components/ProfileButton';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth(); // Usar el método login del contexto
+  const { login } = useAuth();
 
   const onLoginPress = async () => {
-    const result = await handleLogin(email, password);
-    if (result.success) {
-      Alert.alert("Success", "Logged in successfully");
-      login(result.data);
-    } else {
-      Alert.alert("Error", result.error);
+    if (!email || !password) {
+      Alert.alert("Error", "Please fill in both email and password");
+      return;
+    }
+  
+    try {
+      const result = await handleLogin(email, password);
+      if (result.success) {
+        Alert.alert("Success", "Logged in successfully");
+        login(result.data);
+      } else {
+        Alert.alert("Error", result.error);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Something went wrong, please try again");
     }
   };
   
-  
-
   return (
     <View style={styles.container}>
       <FontAwesome5 name="user-circle" size={100} color="#ffab00" style={{ alignSelf: 'center', marginBottom: 16 }} />
@@ -44,8 +52,8 @@ const LoginScreen = ({ navigation }) => {
         placeholderTextColor="#888"
       />
 
-      <TouchableOpacity style={styles.button} onPress={onLoginPress}>
-        <Text style={styles.buttonText}>Log In</Text>
+      <TouchableOpacity>
+        <ProfileButton label="Log In" onPress={onLoginPress} />
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate('Register')}>
@@ -60,18 +68,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 24,
-    backgroundColor: '#0c0c0c',  // Background consistent with HomeScreen
+    backgroundColor: '#0c0c0c',
   },
   title: {
     fontSize: 36,
     fontWeight: 'bold',
-    color: '#FFFFFF',  // White text for title
+    color: '#FFFFFF',
     marginBottom: 10,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 25,
-    color: 'darkgray',  // Light grey text for subtitle
+    color: 'darkgray',
     marginBottom: 24,
     textAlign: 'center',
   },

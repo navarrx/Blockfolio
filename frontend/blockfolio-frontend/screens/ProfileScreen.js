@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { updateUserProfile } from '../api'; 
-import { useAuth } from '../context/AuthContext'; 
+import { useAuth } from '../context/AuthContext';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import ProfileButton from '../components/ProfileButton';
+import LogoutButton from '../components/LogoutButton';
 
 const ProfileScreen = () => {
-  const { user } = useAuth(); 
+  const { user, logout } = useAuth(); 
+  const navigation = useNavigation();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -13,55 +17,68 @@ const ProfileScreen = () => {
 
   useEffect(() => {
     if (user) {
-      setName(user.name || ''); // Establecer nombre inicial
-      setEmail(user.email || ''); // Establecer email inicial
+      setName(user.name || '');
+      setEmail(user.email || '');
     }
   }, [user]);
 
   const handleUpdateProfile = async () => {
-    if (newPassword && newPassword !== confirmNewPassword) {
+    if (newPassword === '' || confirmNewPassword === '') {
+      Alert.alert("Error", "Please fill in both password fields");
+      return;
+    }
+    
+    if (newPassword !== confirmNewPassword) {
       Alert.alert("Error", "Passwords do not match");
       return;
     }
-
+  
     const updatedData = { name, email };
-    
+  
     if (newPassword) {
       updatedData.password = newPassword;
     }
-
+  
     try {
       const response = await updateUserProfile(updatedData);
-
-      if (response.status === 200) {
-        Alert.alert("Success", "Profile updated successfully");
+      if (response) {
+        Alert.alert("Success", "Profile updated successfully", [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate('HomeScreen'), // Navegar a HomeScreen
+          },
+        ]);
       }
     } catch (error) {
-      Alert.alert("Error", "Failed to update profile. Please try again.");
+      Alert.alert("Error", error.message);
     }
-  };
+  };  
+  
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: () => logout() },
+      ],
+      { cancelable: false }
+    )
+  }
 
   return (
     <View style={styles.container}>
       <FontAwesome5 name="user-circle" size={80} color="#ffab00" style={{ alignSelf: 'center', marginBottom: 16 }} />
-      <Text style={styles.title}>Your Profile</Text>
+      <Text style={styles.title}>Profile Details</Text>
       <View style={styles.line}></View>
+      <Text style={styles.readOnlyText}>{name}</Text>
+      <Text style={styles.readOnlyText}>{email}</Text>
+      
+      <Text style={styles.subtitle}>Do you want to modify your password?</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Name"
-        value={name}
-        onChangeText={setName}
-        placeholderTextColor="#888"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-        placeholderTextColor="#888"
-      />
       <TextInput
         style={styles.input}
         placeholder="New Password"
@@ -78,10 +95,10 @@ const ProfileScreen = () => {
         onChangeText={setConfirmNewPassword}
         placeholderTextColor="#888"
       />
-
-      <TouchableOpacity style={styles.button} onPress={handleUpdateProfile}>
-        <Text style={styles.buttonText}>Update Profile</Text>
+      <TouchableOpacity>
+        <ProfileButton label="Update Profile" onPress={handleUpdateProfile} />
       </TouchableOpacity>
+      <LogoutButton onPress={handleLogout} />
     </View>
   );
 };
@@ -99,6 +116,12 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     marginBottom: 10,
     textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 16,
   },
   line: {
     borderBottomColor: 'grey',
@@ -119,18 +142,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#1c1c1e',
     color: '#FFFFFF',
   },
-  button: {
-    backgroundColor: '#ffab00',
-    paddingVertical: 12,
+  readOnlyText: {
+    height: 50,
+    borderColor: '#333',
+    borderWidth: 1,
     borderRadius: 8,
+    paddingHorizontal: 16,
+    fontSize: 16,
     marginBottom: 16,
-  },
-  buttonText: {
-    color: 'black',
-    fontSize: 18,
-    textAlign: 'center',
+    backgroundColor: '#1c1c1e',
+    color: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 15,
   },
 });
 
 export default ProfileScreen;
- 

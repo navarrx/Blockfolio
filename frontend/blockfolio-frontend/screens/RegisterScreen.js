@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { registerUser } from '../api'; // Importamos la función desde api.js
+import { registerUser } from '../api';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import ProfileButton from '../components/ProfileButton';
 
 const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -10,16 +11,21 @@ const RegisterScreen = ({ navigation }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleRegister = async () => {
+    if (!name || !email || !password || !confirmPassword) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+  
     if (password !== confirmPassword) {
       Alert.alert("Error", "Passwords do not match");
       return;
     }
-
+  
     try {
       const response = await registerUser(name, email, password);
-
-      if (response.status === 201) {
-        Alert.alert("Success", "Account created successfully");
+  
+      if (response.status === 200) {
+        Alert.alert("Success", "User registered successfully");
         navigation.navigate('Login');
       }
     } catch (error) {
@@ -30,6 +36,7 @@ const RegisterScreen = ({ navigation }) => {
       }
     }
   };
+  
 
   return (
     <View style={styles.container}>
@@ -68,8 +75,8 @@ const RegisterScreen = ({ navigation }) => {
         placeholderTextColor="#888"
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Register</Text>
+      <TouchableOpacity>
+        <ProfileButton label="Register" onPress={handleRegister} />
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate('Login')}>

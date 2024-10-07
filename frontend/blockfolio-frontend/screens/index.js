@@ -3,8 +3,9 @@ import LoginScreen from "./LoginScreen";
 import PortfolioScreen from "./PortfolioScreen";
 import RegisterScreen from "./RegisterScreen";
 import CryptoDetailsScreen from "./CryptoDetailsScreen";
-import PortfolioScreen from "./PortfolioScreen";
+import ProfileScreen from "./ProfileScreen";
 import NewsScreen from "./NewsScreen";
+import EditCryptoScreen from "./EditCryptoScreen";
 
 export { 
     HomeScreen, 
@@ -12,6 +13,7 @@ export {
     PortfolioScreen,
     RegisterScreen,
     CryptoDetailsScreen,
-    PortfolioScreen,
-    NewsScreen
+    ProfileScreen,
+    NewsScreen,
+    EditCryptoScreen
 };
