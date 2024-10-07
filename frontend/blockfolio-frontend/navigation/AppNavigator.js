@@ -1,13 +1,13 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Entypo from '@expo/vector-icons/Entypo';
 import { View, Text } from 'react-native';
+import Entypo from '@expo/vector-icons/Entypo';
 import NewsScreen from '../screens/NewsScreen';
-import HomeScreen from '../screens/HomeScreen';
 import PortfolioScreen from '../screens/PortfolioScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 import AuthNavigator from './AuthNavigator';
-import ProfileScreen from '../screens/ProfileScreen'; // Importar ProfileScreen
-import { useAuth } from '../context/AuthContext'; // Importar el contexto
+import HomeStackNavigator from './HomeStackNavigator';
+import { useAuth } from '../context/AuthContext';
 
 const Tab = createBottomTabNavigator();
 
@@ -26,13 +26,13 @@ const screenOptions = {
 };
 
 const AppNavigator = () => {
-  const { isAuthenticated } = useAuth(); // Obtener el estado de autenticación
+  const { isAuthenticated } = useAuth();
 
   return (
     <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        component={HomeStackNavigator} // Usa el stack navigator en lugar de HomeScreen
         options={{
           tabBarIcon: ({ focused }) => (
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -54,18 +54,20 @@ const AppNavigator = () => {
           ),
         }}
       />
-      <Tab.Screen
-        name="Portfolio"
-        component={PortfolioScreen}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-              <Entypo name="wallet" size={20} color={focused ? '#FFBF00' : 'white'} />
-              <Text style={{ color: focused ? '#FFBF00' : 'white', fontSize: 13 }}>Portfolio</Text>
-            </View>
-          ),
-        }}
-      />
+      {isAuthenticated && (
+         <Tab.Screen
+            name="Portfolio"
+            component={PortfolioScreen}
+            options={{
+              tabBarIcon: ({ focused }) => (
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                  <Entypo name="wallet" size={20} color={focused ? '#FFBF00' : 'white'} />
+                  <Text style={{ color: focused ? '#FFBF00' : 'white', fontSize: 13 }}>Portfolio</Text>
+                </View>
+              ),
+            }}
+          />
+        )}
       {isAuthenticated ? (
         <Tab.Screen
           name="Profile"

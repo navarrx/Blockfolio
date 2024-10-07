@@ -5,5 +5,6 @@ import RegisterScreen from "../screens/RegisterScreen";
 import CryptoDetailsScreen from "../screens/CryptoDetailsScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import NewsScreen from "../screens/NewsScreen";
+import { EditCryptoScreen } from "../screens";
 
-export { HomeScreen, LoginScreen, PortfolioScreen, RegisterScreen, CryptoDetailsScreen, ProfileScreen, NewsScreen };
+export { HomeScreen, LoginScreen, PortfolioScreen, RegisterScreen, CryptoDetailsScreen, ProfileScreen, NewsScreen, EditCryptoScreen };
