@@ -3,6 +3,8 @@ package com.example.backend.User;
 import com.example.backend.Portfolio.Portfolio;
 import com.example.backend.Portfolio.PortfolioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -30,13 +32,22 @@ public class UserServices {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
+        // Guardar el usuario primero
         User savedUser = userRepository.save(user);
+        System.out.println("Usuario creado: " + savedUser.getEmail());
+
+        // Crear el portfolio y asignarlo al usuario
         Portfolio portfolio = new Portfolio();
         portfolio.setUser(savedUser);
+        savedUser.setPortfolio(portfolio);
+
+        // Guardar el portfolio
         portfolioRepository.save(portfolio);
+        System.out.println("Portfolio creado para el usuario: " + savedUser.getEmail());
 
         return savedUser;
     }
+
 
     public User updateUser(int id, User user) {
         User userToUpdate = userRepository.findById(id).orElse(null);
@@ -44,10 +55,16 @@ public class UserServices {
             return null;
         }
         userToUpdate.setName(user.getName());
-        userToUpdate.setPassword(user.getPassword());
         userToUpdate.setEmail(user.getEmail());
+
+        if (!user.getPassword().isEmpty() && user.getPassword() != null) {
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            userToUpdate.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
         return userRepository.save(userToUpdate);
     }
+
 
     public void deleteUser(int id) {
         userRepository.deleteById(id);
@@ -62,6 +79,15 @@ public class UserServices {
     }
 
     public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
+
+    public User getMe() {
+        // Obtener el usuario autenticado desde el contexto de seguridad
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName(); // El 'email' del usuario autenticado
+
+        // Buscar el usuario en la base de datos por su email
         return userRepository.findByEmail(email).orElse(null);
     }
 }

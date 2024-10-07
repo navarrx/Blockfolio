@@ -49,8 +49,10 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> updateUser(@RequestBody User user) {
-        User updatedUser = userServices.updateUser(user.getId(), user);
+    public ResponseEntity<?> updateUser(
+            @RequestParam Integer userId,
+            @RequestBody User user) {
+        User updatedUser = userServices.updateUser(userId, user);
         if (updatedUser == null) {
             Map<String, String> response = new HashMap<>();
             response.put("message", "User not found");
@@ -65,5 +67,16 @@ public class UserController {
         Map<String, String> response = new HashMap<>();
         response.put("message", "User deleted");
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getMe() {
+        User user = userServices.getMe();
+        if (user == null) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "User not found");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 }

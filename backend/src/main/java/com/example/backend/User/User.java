@@ -64,9 +64,13 @@ public class User implements UserDetails {
         return password;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public String getUsername() {
-        return null;
+        return email;
     }
 
     @Override
@@ -94,9 +98,6 @@ public class User implements UserDetails {
         return true;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public Portfolio getPortfolio() {
         return portfolio;
