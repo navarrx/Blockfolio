@@ -93,17 +93,17 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 50,
-    borderColor: '#333',  // Darker border to match the theme
+    borderColor: '#333',
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 16,
     fontSize: 16,
     marginBottom: 16,
-    backgroundColor: '#1c1c1e',  // Dark input background
-    color: '#FFFFFF',  // White text inside inputs
+    backgroundColor: '#1c1c1e',
+    color: '#FFFFFF',
   },
   button: {
-    backgroundColor: '#ffab00',  // Blue color for the login button
+    backgroundColor: '#ffab00',
     paddingVertical: 12,
     borderRadius: 8,
     marginBottom: 16,
@@ -116,10 +116,10 @@ const styles = StyleSheet.create({
   switchText: {
     fontSize: 16,
     textAlign: 'center',
-    color: '#888',  // Light grey text for switch text
+    color: '#888',
   },
   switchTextBold: {
-    color: '#ffab00',  // Accent color matching HomeScreen
+    color: '#ffab00',
     fontWeight: 'bold',
   },
 });

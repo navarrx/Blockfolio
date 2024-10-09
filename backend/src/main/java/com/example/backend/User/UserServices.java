@@ -32,16 +32,13 @@ public class UserServices {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        // Guardar el usuario primero
         User savedUser = userRepository.save(user);
         System.out.println("Usuario creado: " + savedUser.getEmail());
 
-        // Crear el portfolio y asignarlo al usuario
         Portfolio portfolio = new Portfolio();
         portfolio.setUser(savedUser);
         savedUser.setPortfolio(portfolio);
 
-        // Guardar el portfolio
         portfolioRepository.save(portfolio);
         System.out.println("Portfolio creado para el usuario: " + savedUser.getEmail());
 
@@ -65,17 +62,8 @@ public class UserServices {
         return userRepository.save(userToUpdate);
     }
 
-
     public void deleteUser(int id) {
         userRepository.deleteById(id);
-    }
-
-    public User validateUser(String email, String password) {
-        User user = userRepository.findByEmail(email).orElse(null);
-        if (user != null && new BCryptPasswordEncoder().matches(password, user.getPassword())) {
-            return user;
-        }
-        return null;
     }
 
     public User getUserByEmail(String email) {
@@ -83,11 +71,9 @@ public class UserServices {
     }
 
     public User getMe() {
-        // Obtener el usuario autenticado desde el contexto de seguridad
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName(); // El 'email' del usuario autenticado
+        String email = authentication.getName();
 
-        // Buscar el usuario en la base de datos por su email
         return userRepository.findByEmail(email).orElse(null);
     }
 }

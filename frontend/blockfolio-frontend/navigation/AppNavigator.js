@@ -2,9 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text } from 'react-native';
 import Entypo from '@expo/vector-icons/Entypo';
-import NewsScreen from '../screens/NewsScreen';
-import PortfolioScreen from '../screens/PortfolioScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import { NewsScreen, PortfolioScreen, ProfileScreen } from '../screens';
 import AuthNavigator from './AuthNavigator';
 import HomeStackNavigator from './HomeStackNavigator';
 import { useAuth } from '../context/AuthContext';
@@ -32,7 +30,7 @@ const AppNavigator = () => {
     <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen
         name="Home"
-        component={HomeStackNavigator} // Usa el stack navigator en lugar de HomeScreen
+        component={HomeStackNavigator}
         options={{
           tabBarIcon: ({ focused }) => (
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>

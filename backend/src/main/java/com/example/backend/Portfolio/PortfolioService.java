@@ -30,9 +30,9 @@ public class PortfolioService {
     public Portfolio getPortfolioByUserId(Integer userId) {
         List<Portfolio> portfolios = portfolioRepository.findByUserId(userId);
         if (portfolios.isEmpty()) {
-            return createNewPortfolioForUser(userId); // Crea un nuevo portfolio si no existe
+            return createNewPortfolioForUser(userId);
         }
-        return portfolios.get(0); // Devuelve el primer portfolio encontrado (debería haber solo uno por usuario)
+        return portfolios.get(0);
     }
 
     public Portfolio createNewPortfolioForUser(Integer userId) {
@@ -41,7 +41,7 @@ public class PortfolioService {
             User user = userOptional.get();
             Portfolio portfolio = new Portfolio();
             portfolio.setUser(user);
-            portfolio.setPortfolioCryptocurrencies(Set.of()); // Inicializar el set de criptomonedas vacío
+            portfolio.setPortfolioCryptocurrencies(Set.of());
             return portfolioRepository.save(portfolio);
         }
         throw new RuntimeException("Usuario no encontrado con ID: " + userId);
@@ -74,7 +74,7 @@ public class PortfolioService {
             if (cryptoData != null) {
                 PortfolioCryptocurrencyDTO updatedCrypto = new PortfolioCryptocurrencyDTO();
                 updatedCrypto.setSymbol(symbol);
-                updatedCrypto.setLogoURL(cryptoData.getLogoURL()); // Agrega esta línea
+                updatedCrypto.setLogoURL(cryptoData.getLogoURL());
                 updatedCrypto.setQuantity(portfolioCryptocurrency.getQuantity());
                 updatedCrypto.setCurrentPrice(cryptoData.getPrice());
                 updatedCrypto.setTotalValue(cryptoData.getPrice() * portfolioCryptocurrency.getQuantity());
@@ -82,7 +82,6 @@ public class PortfolioService {
                 updatedCryptos.add(updatedCrypto);
             }
         }
-
         return updatedCryptos;
     }
 }

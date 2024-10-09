@@ -45,7 +45,7 @@ const ProfileScreen = () => {
         Alert.alert("Success", "Profile updated successfully", [
           {
             text: "OK",
-            onPress: () => navigation.navigate('HomeScreen'), // Navegar a HomeScreen
+            onPress: () => navigation.navigate('HomeScreen'),
           },
         ]);
       }

@@ -1,27 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
-import { fetchCryptoNews } from '../api'; // Asegúrate de que el path sea correcto
+import { View, Text, ActivityIndicator, StyleSheet, RefreshControl } from 'react-native';
+import { fetchCryptoNews } from '../api';
 import { FlashList } from '@shopify/flash-list';
-import NewsCard from '../components/NewsCard'; // Asegúrate de que el path sea correcto
+import NewsCard from '../components/NewsCard';
 
 const NewsScreen = () => {
     const [news, setNews] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const fetchNews = async () => {
+        try {
+            const response = await fetchCryptoNews();
+            setNews(response);
+        } catch (error) {
+            console.error('Error fetching news:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchNews = async () => {
-            try {
-                const response = await fetchCryptoNews();
-                setNews(response);
-            } catch (error) {
-                console.error('Error fetching news:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchNews();
     }, []);
+
+    const onRefresh = async () => {
+        setRefreshing(true);
+        await fetchNews();
+        setRefreshing(false);
+    };
 
     const renderItem = ({ item }) => (
         <NewsCard
@@ -35,7 +42,7 @@ const NewsScreen = () => {
 
     return (
         <View style={styles.listContainer}>
-            <Text style={styles.title} >Latest Crypto News</Text>
+            <Text style={styles.title}>Latest Crypto News</Text>
             <View style={styles.line} />
             {loading ? (
                 <ActivityIndicator size="large" color="#FFF" />
@@ -45,6 +52,14 @@ const NewsScreen = () => {
                     contentContainerStyle={styles.flashListContent}
                     renderItem={renderItem}
                     estimatedItemSize={100}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                            tintColor="black"
+                            colors={['black']}
+                        />
+                    }
                 />
             )}
         </View>
@@ -82,7 +97,7 @@ const styles = StyleSheet.create({
         marginBottom: 50,
     },
     flashListContent: {
-        paddingVertical: 5
+        paddingVertical: 5,
     },
 });
 

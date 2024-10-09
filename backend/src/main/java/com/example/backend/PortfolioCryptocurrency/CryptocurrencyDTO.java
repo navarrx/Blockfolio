@@ -8,8 +8,6 @@ public class CryptocurrencyDTO {
     private String logoURL;
     private double percentChange;
 
-    // Getters and setters
-
     public String getName() {
         return name;
     }

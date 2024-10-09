@@ -11,30 +11,35 @@ export default function PortfolioCryptoCard({
     onRemove,
     navigation
 }) {
+    const goToDetails = () => {
+        navigation.navigate('CryptoDetailsScreen', { symbol, logoURL, quantity, currentPrice, totalValue });
+    };
 
     return (
-        <View style={styles.cryptoItem}>
-            <View style={styles.row}>
-                <View style={styles.logoColumn}>
-                    <Image source={{ uri: logoURL }} style={styles.logo} />
+        <TouchableOpacity onPress={goToDetails}>
+            <View style={styles.cryptoItem}>
+                <View style={styles.row}>
+                    <View style={styles.logoColumn}>
+                        <Image source={{ uri: logoURL }} style={styles.logo} />
+                    </View>
+                    <View style={styles.column}>
+                        <Text style={styles.symbol}>{(symbol || 'N/A').toUpperCase()}</Text>
+                        <Text style={styles.quantity}>Quantity: {quantity !== undefined ? quantity : 'N/A'}</Text>
+                    </View>
+                    <View style={styles.column}>
+                        <Text style={styles.price}>
+                            Price: ${currentPrice !== undefined ? currentPrice.toFixed(2) : 'N/A'}
+                        </Text>
+                        <Text style={styles.totalValue}>
+                            Value: ${totalValue !== undefined ? totalValue.toFixed(2) : 'N/A'}
+                        </Text>
+                    </View>
+                    <TouchableOpacity onPress={() => navigation.navigate('EditCryptoScreen', { logoURL, currentPrice, symbol, quantity })}>
+                        <Entypo name="edit" size={24} color="black" />
+                    </TouchableOpacity>
                 </View>
-                <View style={styles.column}>
-                    <Text style={styles.symbol}>{(symbol || 'N/A').toUpperCase()}</Text>
-                    <Text style={styles.quantity}>Quantity: {quantity !== undefined ? quantity : 'N/A'}</Text>
-                </View>
-                <View style={styles.column}>
-                    <Text style={styles.price}>
-                        Price: ${currentPrice !== undefined ? currentPrice.toFixed(2) : 'N/A'}
-                    </Text>
-                    <Text style={styles.totalValue}>
-                        Value: ${totalValue !== undefined ? totalValue.toFixed(2) : 'N/A'}
-                    </Text>
-                </View>
-                <TouchableOpacity onPress={() => navigation.navigate('EditCryptoScreen', { logoURL, currentPrice, symbol, quantity })}>
-                    <Entypo name="edit" size={24} color="black" />
-                </TouchableOpacity>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 }
 

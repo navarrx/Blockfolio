@@ -56,9 +56,7 @@ const PortfolioScreen = ({ navigation }) => {
             navigation={navigation}
         />
     </TouchableOpacity>
-);
-
-  
+);  
 
   return (
     <View style={[styles.container, { paddingBottom: 60 }]}>

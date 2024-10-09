@@ -21,11 +21,11 @@ public class Portfolio {
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    @JsonBackReference // Esta referencia ya está bien gestionada con User
+    @JsonBackReference
     private User user;
 
     @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
-    @JsonManagedReference // Indica que este es el lado "principal" de la relación
+    @JsonManagedReference
     private Set<PortfolioCryptocurrency> portfolioCryptocurrencies;
 }
 
