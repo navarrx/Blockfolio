@@ -31,7 +31,7 @@ const TopCryptoList = ({ activeTab, navigation, onRefresh }) => {
     const onRefreshHandler = async () => {
         setRefreshing(true);
         await fetchCryptos();
-        onRefresh();
+        onRefresh();    
     };
 
     return (

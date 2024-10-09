@@ -6,13 +6,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 //PARA FACULTAD
 //'http://10.51.3.194:8080/'
 
-const API_CRYPTOCURRENCIES_BASE_URL = 'http://192.168.18.13:8080/api/cryptocurrencies';
+const API_CRYPTOCURRENCIES_BASE_URL = 'http://10.51.3.194:8080/api/cryptocurrencies';
 
-const API_AUTH_BASE_URL = 'http://192.168.18.13:8080/api/auth';
+const API_AUTH_BASE_URL = 'http://10.51.3.194:8080/api/auth';
 
-const API_USER_BASE_URL = 'http://192.168.18.13:8080/api/users';
+const API_USER_BASE_URL = 'http://10.51.3.194:8080/api/users';
 
-const API_PORTFOLIO_BASE_URL = 'http://192.168.18.13:8080/api/portfolios';
+const API_PORTFOLIO_BASE_URL = 'http://10.51.3.194:8080/api/portfolios';
 
 export const handleLogin = async (email, password) => {
   try {
@@ -101,7 +101,6 @@ export const fetchUserPortfolio = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;

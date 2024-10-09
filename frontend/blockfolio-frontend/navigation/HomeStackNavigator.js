@@ -1,5 +1,5 @@
 import React from 'react';
-import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import { HomeScreen, CryptoDetailsScreen, EditCryptoScreen } from '../screens';
 import { Easing } from 'react-native-reanimated';
 

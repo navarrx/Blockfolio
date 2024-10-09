@@ -34,7 +34,6 @@ const PortfolioScreen = ({ navigation }) => {
       const response = await fetchUserPortfolio();
       setPortfolio(response);
       setRefreshTrigger(prev => prev + 1);
-  
     } catch (error) {
       console.error('Error fetching portfolio during refresh:', error);
     } finally {

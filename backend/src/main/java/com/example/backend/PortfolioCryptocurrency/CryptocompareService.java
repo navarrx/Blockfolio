@@ -15,12 +15,12 @@ public class CryptocompareService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     public String getDataByCrypto(String crypto) {
-            String url = "https://data-api.cryptocompare.com/asset/v1/data/by/symbol?asset_symbol=" + crypto + "&api_key=" + apiKey;
+        String url = "https://data-api.cryptocompare.com/asset/v1/data/by/symbol?asset_symbol=" + crypto + "&api_key=" + apiKey;
         return restTemplate.getForObject(url, String.class);
     }
 
     public String getNews() {
-            String url = "https://min-api.cryptocompare.com/data/v2/news/?lang=EN&api_key=" + apiKey;
+        String url = "https://min-api.cryptocompare.com/data/v2/news/?lang=EN&api_key=" + apiKey;
         return restTemplate.getForObject(url, String.class);
     }
 }
