@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ActivityIndicator, ScrollView, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, ActivityIndicator, ScrollView, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DetailedCryptoCard from '../components/DetailedCryptoCard';
 import { fetchCryptoDetails, addCryptoToPortfolio } from '../api';
@@ -16,9 +16,16 @@ const CryptoDetailsScreen = ({ route, navigation }) => {
     const getCryptoDetails = async () => {
       try {
         const data = await fetchCryptoDetails(symbol);
+        if (!data) {
+          throw new Error('No Cryptocurrency found with the given symbol');
+        }
         setCrypto(data);
       } catch (error) {
-        console.error('Error fetching cryptocurrency details:', error);
+        Alert.alert(
+          'Error',
+          'No Cryptocurrency found with the given symbol',
+          [{ text: 'OK', onPress: () => navigation.navigate('HomeScreen') }]
+        );
       } finally {
         setLoading(false);
       }
@@ -32,7 +39,7 @@ const CryptoDetailsScreen = ({ route, navigation }) => {
       addCryptoToPortfolio(symbol, parseFloat(quantity));
       navigation.navigate('Portfolio');
     } else {
-      alert('Please enter a valid quantity');
+      Alert.alert('Invalid Quantity', 'Please enter a valid quantity.');
     }
   };
 
@@ -46,7 +53,7 @@ const CryptoDetailsScreen = ({ route, navigation }) => {
   }
 
   if (!crypto) {
-    return <Text style={styles.errorText}>Error loading cryptocurrency details.</Text>;
+    return null;
   }
 
   return (
@@ -105,12 +112,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#ffab00',
     marginLeft: 5,
-  },
-  errorText: {
-    color: '#ff0000',
-    textAlign: 'center',
-    marginTop: 20,
-    fontSize: 18,
   },
   addPortfolioContainer: {
     marginTop: 20,

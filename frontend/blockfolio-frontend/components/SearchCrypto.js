@@ -19,10 +19,10 @@ const SearchCrypto = ({ navigation }) => {
         placeholderTextColor="#999da0"
         value={symbol}
         onChangeText={setSymbol}
-        onSubmitEditing={searchCrypto} // Ejecuta la búsqueda al presionar Enter
+        onSubmitEditing={searchCrypto}
         returnKeyType="search"
         style={styles.searchInput}
-        autoCapitalize="none" // Para evitar que se capitalicen las letras automáticamente
+        autoCapitalize="none"
       />
     </View>
   );
