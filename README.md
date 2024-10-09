@@ -5,17 +5,15 @@ This project is a crypto portfolio app developed using Java for the backend and 
 
 ## Features
 - **Portfolio Management:** Users can add, edit, and delete their cryptocurrency holdings.
+- **Cryptocurrency Details:** Users can search for their desired cryptocurrency and read about them.
+- **Latest News:** Users get access to the latest crypto related news from all over the world.
 - **Real-time Prices:** View real-time prices for various cryptocurrencies.
-- **Portfolio Analysis:** Analyze portfolio performance with interactive charts and graphs.
 - **Authentication:** Secure user authentication to protect user data.
 
 ## Technologies Used
 - **Backend:** Java
 - **Frontend:** React Native + Expo
 - **Database:** PostgreSQL
-
-## Installation
-To be completed
 
 ## Contact
 For any inquiries or support, please contact sa.navarro@alumno.um.edu.ar
